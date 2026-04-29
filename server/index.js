@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
+const authRoutes = require("./routes/authRoutes");
 
 // Initialize the Express application
 const app = express();
@@ -16,6 +17,19 @@ app.use(cors());
 // This parses incoming requests with JSON payloads (req.body)
 // Required to read request body data from POST/PUT requests
 app.use(express.json());
+
+app.use("/api/auth", authRoutes);
+
+// Handle malformed JSON payloads sent to the API
+// This catches parsing errors thrown by express.json()
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && "body" in err) {
+    return res.status(400).json({
+      message: "Invalid JSON payload. Ensure keys and strings use double quotes.",
+    });
+  }
+  next(err);
+});
 
 // Health check endpoint
 // Returns the current server status and timestamp
