@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
+const eventRoutes = require("./routes/eventRoutes");
 
 // Initialize the Express application
 const app = express();
@@ -18,7 +19,10 @@ app.use(cors());
 // Required to read request body data from POST/PUT requests
 app.use(express.json());
 
+app.use("/uploads", express.static("public/uploads"));
+
 app.use("/api/auth", authRoutes);
+app.use("/api/events", eventRoutes);
 
 // Handle malformed JSON payloads sent to the API
 // This catches parsing errors thrown by express.json()
@@ -49,5 +53,7 @@ const startServer = async () => {
     console.log(`Server running on port ${PORT}`);
   });
 };
+
+startServer();
 
 startServer();
